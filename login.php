@@ -1,5 +1,37 @@
 <?php
 require "inc/cabecalho.php";
+require "inc/funcoes-sessao.php";
+require "inc/funcoes-usuarios.php";
+
+if( isset($_POST['entrar']) ){
+  if(empty($_POST['email']) || empty($_POST['senha'])){
+    header("location:login.php?campos_obrigatorios");
+    } else {
+      $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+      $senha = $_POST['senha'];
+      /* verificando no banco se existe alguem com o email informado */
+      $usuario = buscarUsuario($conexao, $email);
+
+      if($usuario != null){
+        if(password_verify($senha, $usuariousuario['senha'])){
+          login(
+            $usuario['id'], $usuario['nome'],
+            $usuario['email'], $usuario['tipo']
+          );
+          header("location:admin/index.php");
+        }else {
+          header("location:login.php?senha_incorreta");
+        }
+      }else {
+        header("location:login.php?nao_encontrado");
+      }
+
+
+        }
+      }
+
+      
+  
 ?>
 <div class="row">
   <article class="col-12 bg-white rounded shadow my-1 py-4">
