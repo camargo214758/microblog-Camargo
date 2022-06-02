@@ -2,9 +2,28 @@
 require "inc/cabecalho.php";
 require "inc/funcoes-sessao.php";
 require "inc/funcoes-usuarios.php";
+/* Mensagens para os processos de erros no login */
+if( isset($_GET['acesso_proibido']) ){
+  $feedback = "Você deve logar primeiro!";
+} elseif( isset($_GET['logout']) ) {
+  $feedback = "Você saiu do sistema!";
+} elseif( isset($_GET['nao_encontrado']) ) {
+  $feedback = "Usuário não encontrado!";
+} elseif( isset($_GET['senha_incorreta']) ) {
+  $feedback = "A senha está errada!";          
+} elseif( isset($_GET['campos_obrigatorios']) ) {
+  $feedback = "Você deve preencher todos os campos!";
+} else {
+  $feedback = "";
+}
 
+
+// 1) [IF] verifica se o botão foi acionado
 if( isset($_POST['entrar']) ){
+
+  // Se os campos estão vazios
   if(empty($_POST['email']) || empty($_POST['senha'])){
+    // Redireciona para login com parametro indicando campos obrigatórios
     header("location:login.php?campos_obrigatorios");
     } else {
       $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
@@ -12,17 +31,24 @@ if( isset($_POST['entrar']) ){
       /* verificando no banco se existe alguem com o email informado */
       $usuario = buscarUsuario($conexao, $email);
 
+      /* 3) [IF/ELSE] Se usuario é diferentede nulo ( ou seja, se tem usuario)
+*/
       if($usuario != null){
-        if(password_verify($senha, $usuariousuario['senha'])){
+
+        /* 4) [IF/ELSE] se as senhas foremiguais */
+        if(password_verify($senha, $usuario['senha'])){
+          // então inicia o logim para area administrativo
           login(
             $usuario['id'], $usuario['nome'],
             $usuario['email'], $usuario['tipo']
           );
           header("location:admin/index.php");
         }else {
+          // caso contrario, fique no login e diga que a senha ta errada
           header("location:login.php?senha_incorreta");
         }
       }else {
+        // caso contrario, nao existeusuario
         header("location:login.php?nao_encontrado");
       }
 
@@ -40,7 +66,7 @@ if( isset($_POST['entrar']) ){
     <form action="" method="post" id="form-login" name="form-login" class="mx-auto w-50">
 
       <p class="my-2 alert alert-warning text-center">
-        Mensagem...
+        <?=$feedback?>
       </p>
 
       <div class="form-group">

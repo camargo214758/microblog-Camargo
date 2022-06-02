@@ -17,7 +17,7 @@ function verificaAcesso(){
         apague qualquer resquicio de sessão e force o usuário 
         a ir para o login.php */
         session_destroy();
-    header("location:../login.php");
+    header("location:../login.php?logout");
     die();
     }
 }
@@ -37,5 +37,13 @@ function logout(){
     header("location:../login.php");
     die();
     
+}
+
+function verificaAcessoAdmin(){
+    if($_SESSION['tipo'] != 'admin'){
+        // redirecione para a pagina nao-autorizado
+        header("location:nao-autorizado.php");
+        die(); //ou exit
+    }
 }
 
