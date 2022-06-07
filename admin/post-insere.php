@@ -10,10 +10,10 @@ $resumo = filter_input(INPUT_POST, 'resumo',FILTER_SANITIZE_SPECIAL_CHARS);
 // obtendo dados do arquivo enviado
 $imagem = $_FILES['imagem'];
 
-// Função de Upload
+// Função de Upload (responsavel por enviar o arquivo para o HD do servidor)
 upload($imagem);
 
-// funcão inserirpost
+// funcão inserirpost (atenção: mandaremos apenas o nome da imagem)
 inserirPost($conexao, $titulo, $texto, $resumo, $imagem['name'], $_SESSION['id']);
 
 header("location:posts.php");

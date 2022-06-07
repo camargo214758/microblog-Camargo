@@ -1,6 +1,11 @@
 <?php 
 require "../inc/cabecalho-admin.php"; 
+require "../inc/funcoes-posts.php";
 
+$idUsuarioLogado = $_SESSION['id'];
+$tipoUsuarioLogado = $_SESSION['tipo'];
+$posts = lerPosts($conexao, $idUsuarioLogado, $tipoUsuarioLogado);
+$quantidade = count($posts);
 ?>      
     
 <div class="row">
@@ -14,10 +19,11 @@ require "../inc/cabecalho-admin.php";
 
       <table class="table table-hover">
         <thead class="thead-light">
+          <?php foreach($posts as $post) { ?>
           <tr>
-            <th>Título</th>
-            <th>Data</th>
-            <th>Autor</th>
+            <th> <?=$post['titulo']?> </th>
+            <th> <?=$post['data']?> </th>
+            <th> <?=$post['autor']?> </th>
             <th colspan="2" class="text-center">Operações</th>
           </tr>
         </thead>
@@ -41,6 +47,7 @@ require "../inc/cabecalho-admin.php";
               </a>
             </td>
           </tr>
+          <?php } ?>
 
         </tbody>                
       </table>

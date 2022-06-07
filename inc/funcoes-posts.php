@@ -5,7 +5,7 @@ require "conecta.php";
 function inserirPost(mysqli $conexao, string $titulo,string $texto,string $resumo,string $imagem,int $idUsuariologado){
 
     $sql = "INSERT INTO posts(titulo, texto, resumo, imagem, usuario_id)
-    VALUES('$titulo', $texto', '$resumo', '$imagem', $idUsuariologado)"; 
+    VALUES('$titulo', '$texto', '$resumo', '$imagem', $idUsuariologado)"; 
     
     mysqli_query($conexao, $sql) or die(mysqli_error($conexao));
 } // fim inserirPost
@@ -13,8 +13,18 @@ function inserirPost(mysqli $conexao, string $titulo,string $texto,string $resum
 
 
 /* Usada em posts.php */
-function lerPosts(mysqli $conexao):array {
-    $sql = "";
+function lerPosts(mysqli $conexao, int $idUsuarioLogado, string $tipoUsuarioLogado):array {
+    /* Se o tipo de usurio for admin*/
+
+    if($tipoUsuarioLogado == 'admin'){
+        // Montamos um sql que traga todos os posts (de qualquer um )
+        $sql = "SELECT posts.id, posts.titulo, posts.data, usuarios.nome AS autor FROM posts INNER JOIN usuarios ON posts.usuario_id = usuarios.id ORDER BY data DESC";
+
+    } else {
+        // Senão, montamos um sql que traga os posts apenas do editor
+        $sql = "SELECT id, titulo, data FROM posts 
+        WHERE usuario_id = $idUsuarioLogado ORDER BY data DESC";
+    }
 
     $resultado = mysqli_query($conexao,$sql) or die(mysqli_error($conexao));
     $posts = [];
@@ -56,8 +66,32 @@ function excluirPost(mysqli $conexao){
 /* Funções utilitárias */
 
 /* Usada em post-insere.php e post-atualiza.php */
-function upload(){
-    
+function upload($arquivo){
+    // Definindo os tipos de imagem aceito
+    $tiposValidos = [
+        "image/png",
+        "image/jpeg",
+        "image/gif",
+        "image/svg+xml"
+    ];
+
+        // verificando se o arquivo enviado nao é um dos aceitos
+        if( !in_array($arquivo['type'],$tiposValidos) ){
+            die("<script>alert('Fformato é invalido!')history.back();</script>");
+        }
+        // Acessando apenas o nome do arquivo
+        $nome = $arquivo['name']; // $_FILES['ARQUIVO']['name'];
+
+        // acessando dados de acesso temporario ao arquivo
+        $temporario = $arquivo['tmp_name'];
+
+        // Pasta de destino do arquivo que está sdendo enviado
+        $destino = "../imagens/$nome";
+
+        /* Se o processo de envio temporario para destino for feito com sucesso entao a funcão retorna verdadeiro ( indicando o sucesso no processo) */ 
+        if( move_uploaded_file($temporario, $destino) ){
+            return true;
+        }
 } // fim upload
 
 
