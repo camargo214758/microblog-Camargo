@@ -10,7 +10,7 @@ $quantidade = count($posts);
     
 <div class="row">
   <article class="col-12 bg-white rounded shadow my-1 py-4">
-    <h2 class="text-center">Posts <span class="badge badge-primary">X</span></h2>
+    <h2 class="text-center">Posts <span class="badge badge-primary"><?=$quantidade?> </span></h2>
     <p class="lead text-right">
       <a class="btn btn-primary" href="post-insere.php">Inserir novo post</a>
     </p>
@@ -19,30 +19,35 @@ $quantidade = count($posts);
 
       <table class="table table-hover">
         <thead class="thead-light">
-          <?php foreach($posts as $post) { ?>
           <tr>
-            <th> <?=$post['titulo']?> </th>
-            <th> <?=$post['data']?> </th>
-            <th> <?=$post['autor']?> </th>
-            <th colspan="2" class="text-center">Operações</th>
-          </tr>
-        </thead>
-      
-        <tbody>
+            <th> Título </th>
+            <th> Data </th>
+            <?php if($tipoUsuarioLogado == 'admin'){ ?>
+              <th> Autor </th>
+              <?php } ?>
+              <th colspan="2" class="text-center">Operações</th>
+            </tr>
+          </thead>
+          
+          <tbody>
+            
+      <?php foreach($posts as $post) { ?>
+          <tr>
+            <td> <?=$post['titulo']?> </td>
+            <td> <?=formataData($post['data'])?> </td>
 
-          <tr>
-            <td> Título do post... </td>
-            <td> 21/12/2112 21:12 </td>
-            <td> Autor do post... </td>
+            <?php if($tipoUsuarioLogado == 'admin'){ ?>
+            <td> <?=$post['autor']?> </td>
+            <?php } ?>
             <td class="text-center">
               <a class="btn btn-warning btn-sm" 
-              href="post-atualiza.php">
+              href="post-atualiza.php?id=<?=$post['id']?>">
                   Atualizar
               </a>
             </td>
             <td class="text-center">
               <a class="btn btn-danger btn-sm excluir"
-              href="post-exclui.php">
+              href="post-exclui.php?id=<?=$post['id']?>">
                   Excluir
               </a>
             </td>
